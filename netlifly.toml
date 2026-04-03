@@ -1,0 +1,24 @@
+# ════════════════════════════════════════════
+# CliptoIA — Configuración Netlify
+# ════════════════════════════════════════════
+
+[build]
+  publish = "."
+
+# La landing page es index.html
+# La app está en cliptoIA.html
+
+# Cabeceras de seguridad — permite cámara y micrófono
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=*, microphone=*, geolocation=*"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

@@ -1,0 +1,10 @@
+# ════════════════════════════════════════════
+# PeritIA — robots.txt
+# Permite que Google indexe toda la web
+# ════════════════════════════════════════════
+
+User-agent: *
+Allow: /
+
+# Sitemap (créalo en Google Search Console)
+Sitemap: https://www.peritia.es/sitemap.xml
