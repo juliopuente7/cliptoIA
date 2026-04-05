@@ -7,7 +7,7 @@
 <!-- ═══════════════════════════════════════════
      SEO PRIMARIO
 ════════════════════════════════════════════ -->
-<title>CliptoIA — Videoperitación Inteligente con IA para Seguros</title>
+<title>CliptoIA — Videoperitación Inteligente con IA para Seguros</title>hh
 <meta name="description" content="CliptoIA es la plataforma de videoperitación con inteligencia artificial para peritos de seguros. Analiza daños en tiempo real, evalúa cobertura automáticamente y genera informes periciales completos en segundos.">
 <meta name="keywords" content="videoperitación, peritación seguros, perito seguros, inteligencia artificial seguros, análisis daños IA, informe pericial automático, software peritación, CliptoIA">
 <meta name="google-site-verification" content="CpR9XnDDqKlAqG8OQvU3tcCY_54rMXSvyLl3npAHUHc">
@@ -2406,7 +2406,6 @@ async function iniciarSalaDaily() {
     const resp = await fetch('https://api.daily.co/v1/rooms', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY,
         'Authorization': 'Bearer ' + DAILY_API_KEY
       },
       body: JSON.stringify({
@@ -2593,8 +2592,7 @@ Responde SOLO JSON válido sin texto adicional:
   addMsg('ia', 'CliptoIA', 'Analizando imagen y evaluando cobertura según el ramo ' + RAMOS[G.ramo].label + '...');
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY },
+    const resp = await fetch('/api/chat', {
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, messages: [{ role: 'user', content: b64 ? [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } }, { type: 'text', text: prompt }] : prompt }] })
     });
     const data = await resp.json();
@@ -2671,8 +2669,7 @@ async function analizarPoliza() {
   }
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY },
+    const resp = await fetch('/api/chat', {
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: mensajeContent }] })
     });
     const data = await resp.json();
@@ -2736,8 +2733,7 @@ async function subirPoliza(input) {
   reader.onload = async (e) => {
     const b64 = e.target.result.split(',')[1];
     try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY },
+      const resp = await fetch('/api/chat', {
         body: JSON.stringify({
           model: 'claude-sonnet-4-6', max_tokens: 4000,
           messages: [{ role: 'user', content: [
@@ -2782,7 +2778,7 @@ async function preguntarIA() {
   respEl.innerHTML = '<div class="loading-row" style="padding:8px 0"><div class="spinner"></div> Consultando a CliptoIA...</div>';
   const aCtx = G.analisis ? `\nAnálisis: daños=[${G.analisis.danos?.join(', ')}], total=${G.analisis.estimacion?.total}€` : '';
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY }, body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, messages: [{ role: 'user', content: `${RAMOS[G.ramo].ctx}${aCtx}\n\nPregunta: ${q}\n\nRespuesta concisa en español, máx 200 palabras.` }] }) });
+    const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, messages: [{ role: 'user', content: `${RAMOS[G.ramo].ctx}${aCtx}\n\nPregunta: ${q}\n\nRespuesta concisa en español, máx 200 palabras.` }] }) });
     const data = await resp.json();
     const answer = data.content?.map(c => c.text || '').join('') || 'Sin respuesta.';
     respEl.textContent = answer;
@@ -2940,7 +2936,7 @@ Redacta un INFORME PERICIAL COMPLETO, PROFESIONAL Y CON VALIDEZ LEGAL siguiendo 
 Usa terminología técnica pericial española. Cita artículos legales cuando refuerces el veredicto. Máximo 700 palabras. Formato profesional listo para entregar a la aseguradora.`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY }, body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] }) });
+    const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, messages: [{ role: 'user', content: prompt }] }) });
     const data = await resp.json();
     const texto = data.content?.map(c => c.text || '').join('') || 'Error.';
     G.informe = texto;
@@ -3461,8 +3457,7 @@ async function leerFotoAEMET(file) {
     status.innerHTML = '<div class="loading-row" style="padding:8px 0"><div class="spinner"></div> IA leyendo la captura de AEMET...</div>';
     drop.style.borderColor = 'var(--blue)';
     try {
-      const resp = await fetch('https://api.anthropic.com/v1/messages', {
-        method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY },
+      const resp = await fetch('/api/chat', {
         body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 500,
           messages: [{ role: 'user', content: [
             { type: 'image', source: { type: 'base64', media_type: file.type, data: b64 } },
@@ -4150,8 +4145,7 @@ async function subirPresupuesto(file) {
     // Si es imagen o PDF, intentar extraer importe con IA
     if (mime.includes('pdf') || mime.includes('image')) {
       try {
-        const resp = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY },
+        const resp = await fetch('/api/chat', {
           body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 300,
             messages: [{ role: 'user', content: [
               { type: mime.includes('pdf') ? 'document' : 'image',
@@ -4255,8 +4249,7 @@ Responde SOLO JSON:
         ].filter(x => x.type !== 'text' || !x.source) }]
       : [{ role: 'user', content: prompt }];
 
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY },
+    const resp = await fetch('/api/chat', {
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -4441,8 +4434,7 @@ Responde SOLO en JSON sin texto adicional:
 }`;
 
   try {
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST', headers: { 'Content-Type': 'application/json', 'anthropic-dangerous-direct-browser-access': 'true', 'x-api-key': ANTHROPIC_KEY },
+    const resp = await fetch('/api/chat', {
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -4685,7 +4677,7 @@ async function subirBaremoPDF(file) {
     const isPDF=file.type==='application/pdf';
     try {
       const content=isPDF?[{type:'document',source:{type:'base64',media_type:'application/pdf',data:b64}},{type:'text',text:'Extrae todas las partidas de este baremo. Para cada una: descripción, precio unitario, unidad (ud, m², m lineal, hora, global). También extrae el precio de mano de obra por hora si aparece. Responde SOLO JSON: {"baremos":[{"desc":"...","precio":0,"unidad":"ud"}],"moHora":0}'}]:'Analiza este baremo y extrae partidas con descripción, precio y unidad. Responde SOLO JSON: {"baremos":[{"desc":"...","precio":0,"unidad":"ud"}],"moHora":0}';
-      const resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,messages:[{role:'user',content}]})});
+      const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({model:'claude-sonnet-4-6',max_tokens:2000,messages:[{role:'user',content}]}) });
       const data=await resp.json();
       const parsed=JSON.parse(data.content?.map(c=>c.text||'').join('').replace(/```json|```/g,'').trim());
       if(parsed.baremos?.length){
