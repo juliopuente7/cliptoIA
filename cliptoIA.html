@@ -2443,7 +2443,8 @@ async function iniciarSalaDaily() {
     // Actualizar label en directo
     document.querySelector('.vcard-label') && (document.querySelector('.vcard-label').innerHTML = '<div class="vcard-rec"></div> Videollamada en directo · Daily.co');
 
-  } catch(e) {
+  }
+  } catch(e) { console.error('IA error:', e); mostrarError('Error al conectar con IA: ' + e.message); }
     notif('Error Daily.co', e.message, '⚠️');
     addMsg('sys', 'Sistema', '⚠️ Error Daily.co: ' + e.message + ' — usando cámara local');
     startCamLocal();
@@ -2699,7 +2700,8 @@ async function analizarPoliza() {
 
     addMsg('ia', 'CliptoIA', '✓ Condicionado analizado. Veredicto: ' + p.veredicto + '. ' + (p.resumen?.substring(0, 100) || ''));
     notif('Póliza analizada', 'Veredicto: ' + p.veredicto, vIcon[p.veredicto] || '📄');
-  } catch(e) {
+  }
+  } catch(e) { console.error('IA error:', e); mostrarError('Error al conectar con IA: ' + e.message); }
     resContent.innerHTML = `<div class="card" style="background:var(--red-l);border-color:var(--red-m);color:var(--red);font-size:12px">Error al analizar: ${e.message}<br><br>Intenta pegar el texto del condicionado manualmente en el campo de arriba.</div>`;
     notif('Error', e.message, '⚠️');
   }
@@ -2737,7 +2739,8 @@ async function subirPoliza(input) {
             { type: 'text', text: 'Extrae todo el texto de este condicionado de seguro. Devuelve SOLO el texto del documento, sin comentarios, sin formato markdown, tal cual aparece en el PDF. Es importante que extraigas todas las cláusulas, coberturas, exclusiones, franquicias y límites.' }
           ]}]
         })
-      });
+    }
+    } catch(e) { console.error('IA error:', e); mostrarError('Error al conectar con IA: ' + e.message); }
       const data = await resp.json();
       const texto = data.content?.map(c => c.text || '').join('') || '';
       if (texto && texto.length > 50) {
@@ -3067,7 +3070,8 @@ function descargarPDF() {
 
     doc.save(`CliptoIA_${G.expediente}.pdf`);
     addMsg('sys', 'Sistema', '✓ PDF descargado: CliptoIA_' + G.expediente + '.pdf');
-  } catch(e) { notif('Error PDF', e.message, '⚠️'); }
+  }
+  } catch(e) { console.error('IA error:', e); mostrarError('Error al conectar con IA: ' + e.message); }
 }
 
 // ── GUARDAR EXPEDIENTE
@@ -3396,7 +3400,9 @@ async function buscarMeteoFecha() {
       ${esHistorico ? '<div style="background:var(--teal-l);border:1.5px solid var(--teal-m);border-radius:var(--r-m);padding:8px;font-size:11px;color:var(--teal);margin-top:6px">✅ Dato histórico verificado. Válido como evidencia en el informe pericial. Fuente: Open-Meteo ERA5.</div>' : ''}`;
     notif('Meteorología consultada', `${tmax}°C · ${desc}`, icon);
     addMsg('sys', 'Sistema', `🌤 Meteo ${fechaLabel}: ${tmax}°/${tmin}°C · ${prec}mm · ${viento}km/h`);
-  } catch(e) {
+  }
+  } catch(e) { console.error(e); }
+  } catch(e) { console.error('IA error:', e); mostrarError('Error al conectar con IA: ' + e.message); }
     const isTimeout = e.name === 'AbortError';
     wxDiv.innerHTML = `<div style="background:var(--yellow-l);border:1.5px solid var(--yellow-m);border-radius:var(--r-l);padding:14px">
       <div style="font-size:13px;font-weight:700;color:var(--yellow);margin-bottom:6px">${isTimeout ? '⏱ Sin respuesta del servidor' : '⚠️ ' + e.message}</div>
