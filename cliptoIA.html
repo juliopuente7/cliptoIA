@@ -3610,6 +3610,7 @@ function cargarExpedientes() {
 
 function guardarExpedientes() {
   try { localStorage.setItem('cliptoIA_expedientes', JSON.stringify(expedientes)); } catch(e) {}
+  } catch(e) { console.error(e); }
 }
 
 // ─ RENDER AGENDA
