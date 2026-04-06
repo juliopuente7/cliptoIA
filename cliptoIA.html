@@ -2592,9 +2592,7 @@ Responde SOLO JSON válido sin texto adicional:
   addMsg('ia', 'CliptoIA', 'Analizando imagen y evaluando cobertura según el ramo ' + RAMOS[G.ramo].label + '...');
 
   try {
-    const resp = await fetch('/api/chat', {
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, messages: [{ role: 'user', content: b64 ? [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } }, { type: 'text', text: prompt }] : prompt }] })
-    });
+    const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000, messages: [{ role: 'user', content: b64 ? [{ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } }, { type: 'text', text: prompt }] : prompt }] }) });
     const data = await resp.json();
     const p = JSON.parse(data.content?.map(c => c.text || '').join('').replace(/```json|```/g, '').trim());
     G.analisis = p;
@@ -2669,9 +2667,7 @@ async function analizarPoliza() {
   }
 
   try {
-    const resp = await fetch('/api/chat', {
-      body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: mensajeContent }] })
-    });
+    const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500, messages: [{ role: 'user', content: mensajeContent }] }) });
     const data = await resp.json();
     const p = JSON.parse(data.content?.map(c => c.text || '').join('').replace(/```json|```/g, '').trim());
     G.polizaAnalisis = p;
@@ -2733,7 +2729,7 @@ async function subirPoliza(input) {
   reader.onload = async (e) => {
     const b64 = e.target.result.split(',')[1];
     try {
-      const resp = await fetch('/api/chat', {
+      const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: conversationHistory }) });
         body: JSON.stringify({
           model: 'claude-sonnet-4-6', max_tokens: 4000,
           messages: [{ role: 'user', content: [
@@ -3457,7 +3453,7 @@ async function leerFotoAEMET(file) {
     status.innerHTML = '<div class="loading-row" style="padding:8px 0"><div class="spinner"></div> IA leyendo la captura de AEMET...</div>';
     drop.style.borderColor = 'var(--blue)';
     try {
-      const resp = await fetch('/api/chat', {
+      const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: conversationHistory }) });
         body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 500,
           messages: [{ role: 'user', content: [
             { type: 'image', source: { type: 'base64', media_type: file.type, data: b64 } },
@@ -4145,7 +4141,7 @@ async function subirPresupuesto(file) {
     // Si es imagen o PDF, intentar extraer importe con IA
     if (mime.includes('pdf') || mime.includes('image')) {
       try {
-        const resp = await fetch('/api/chat', {
+        const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: conversationHistory }) });
           body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 300,
             messages: [{ role: 'user', content: [
               { type: mime.includes('pdf') ? 'document' : 'image',
@@ -4249,7 +4245,7 @@ Responde SOLO JSON:
         ].filter(x => x.type !== 'text' || !x.source) }]
       : [{ role: 'user', content: prompt }];
 
-    const resp = await fetch('/api/chat', {
+    const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: conversationHistory }) });
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1000,
         messages: [{ role: 'user', content: prompt }]
       })
@@ -4434,7 +4430,7 @@ Responde SOLO en JSON sin texto adicional:
 }`;
 
   try {
-    const resp = await fetch('/api/chat', {
+    const resp = await fetch('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ messages: conversationHistory }) });
       body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       })
